@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradesAI — AI Solutions for the Trades Industry</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --orange: #F4610A;
+    --orange-light: #FF7D2E;
+    --cream: #F5F0E8;
+    --gray: #888;
+    --dark-gray: #1a1a1a;
+    --border: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--black); color: var(--cream); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow-x: hidden; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; width: 100%; z-index: 100; padding: 20px 60px; display: flex; justify-content: space-between; align-items: center; background: rgba(10,10,10,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--cream); }
+  .logo span { color: var(--orange); }
+  nav ul { list-style: none; display: flex; gap: 40px; }
+  nav ul a { color: rgba(245,240,232,0.6); text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: 0.5px; transition: color 0.2s; }
+  nav ul a:hover { color: var(--cream); }
+  .nav-cta { background: var(--orange); color: var(--black) !important; padding: 10px 22px; border-radius: 4px; font-weight: 600 !important; transition: background 0.2s !important; cursor: pointer; }
+  .nav-cta:hover { background: var(--orange-light) !important; color: var(--black) !important; }
+
+  /* CALENDAR MODAL */
+  .cal-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 999; align-items: center; justify-content: center; padding: 20px; }
+  .cal-modal-overlay.open { display: flex; }
+  .cal-modal { background: var(--dark-gray); border: 1px solid var(--border); border-radius: 12px; width: 100%; max-width: 780px; max-height: 90vh; overflow: hidden; position: relative; display: flex; flex-direction: column; }
+  .cal-modal-header { display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid var(--border); }
+  .cal-modal-header span { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 1px; }
+  .cal-close { background: none; border: none; color: var(--cream); font-size: 24px; cursor: pointer; line-height: 1; padding: 4px 8px; opacity: 0.6; transition: opacity 0.2s; }
+  .cal-close:hover { opacity: 1; }
+  .cal-modal iframe { flex: 1; border: none; min-height: 560px; width: 100%; background: white; }
+
+  /* HERO */
+  .hero { min-height: 100vh; display: flex; align-items: center; padding: 140px 60px 80px; position: relative; overflow: hidden; }
+  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 60% 60% at 80% 50%, rgba(244,97,10,0.12) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 20% 80%, rgba(244,97,10,0.06) 0%, transparent 60%); }
+  .hero-grid { position: absolute; inset: 0; opacity: 0.03; background-image: linear-gradient(rgba(245,240,232,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(245,240,232,0.5) 1px, transparent 1px); background-size: 60px 60px; }
+  .hero-content { position: relative; max-width: 800px; }
+  .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(244,97,10,0.12); border: 1px solid rgba(244,97,10,0.3); padding: 6px 16px; border-radius: 100px; font-family: 'DM Mono', monospace; font-size: 12px; color: var(--orange); letter-spacing: 1px; margin-bottom: 32px; animation: fadeUp 0.6s ease both; }
+  .hero-tag::before { content: ''; width: 6px; height: 6px; background: var(--orange); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.8); } }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(64px, 9vw, 120px); line-height: 0.92; letter-spacing: 2px; margin-bottom: 28px; animation: fadeUp 0.6s 0.1s ease both; }
+  h1 .accent { color: var(--orange); }
+  .hero-sub { font-size: 18px; line-height: 1.6; color: rgba(245,240,232,0.65); max-width: 520px; margin-bottom: 48px; animation: fadeUp 0.6s 0.2s ease both; }
+  .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; animation: fadeUp 0.6s 0.3s ease both; }
+  .btn-primary { background: var(--orange); color: var(--black); padding: 16px 32px; border-radius: 4px; font-weight: 600; font-size: 15px; text-decoration: none; transition: all 0.2s; display: inline-block; }
+  .btn-primary:hover { background: var(--orange-light); transform: translateY(-1px); }
+  .btn-ghost { border: 1px solid rgba(245,240,232,0.2); color: var(--cream); padding: 16px 32px; border-radius: 4px; font-weight: 500; font-size: 15px; text-decoration: none; transition: all 0.2s; display: inline-block; }
+  .btn-ghost:hover { border-color: var(--cream); }
+  .hero-stats { display: flex; gap: 48px; margin-top: 72px; padding-top: 40px; border-top: 1px solid var(--border); animation: fadeUp 0.6s 0.4s ease both; }
+  .stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 42px; color: var(--orange); line-height: 1; }
+  .stat-label { font-size: 13px; color: rgba(245,240,232,0.5); margin-top: 4px; letter-spacing: 0.3px; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SECTIONS */
+  section { padding: 100px 60px; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 3px; color: var(--orange); text-transform: uppercase; margin-bottom: 16px; }
+  .section-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(42px, 5vw, 64px); letter-spacing: 1px; line-height: 1; margin-bottom: 20px; }
+  .section-sub { font-size: 16px; color: rgba(245,240,232,0.55); line-height: 1.65; max-width: 480px; }
+
+  /* PAIN */
+  .pain { background: var(--dark-gray); }
+  .pain-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 60px; align-items: start; }
+  .pain-list { display: flex; flex-direction: column; gap: 20px; }
+  .pain-item { display: flex; gap: 16px; align-items: flex-start; padding: 20px; border: 1px solid var(--border); border-radius: 8px; transition: border-color 0.2s; }
+  .pain-item:hover { border-color: rgba(244,97,10,0.3); }
+  .pain-icon { width: 36px; height: 36px; background: rgba(244,97,10,0.12); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+  .pain-text h4 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .pain-text p { font-size: 13px; color: rgba(245,240,232,0.5); line-height: 1.5; }
+  .pain-visual { background: var(--black); border: 1px solid var(--border); border-radius: 12px; padding: 32px; position: sticky; top: 100px; }
+  .terminal-bar { display: flex; gap: 6px; margin-bottom: 24px; }
+  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .terminal-dot:nth-child(1) { background: #ff5f57; }
+  .terminal-dot:nth-child(2) { background: #febc2e; }
+  .terminal-dot:nth-child(3) { background: #28c840; }
+  .terminal-line { font-family: 'DM Mono', monospace; font-size: 12px; margin-bottom: 10px; line-height: 1.6; }
+  .t-prompt { color: var(--orange); }
+  .t-cmd { color: var(--cream); }
+  .t-out { color: rgba(245,240,232,0.45); }
+  .t-success { color: #28c840; }
+
+  /* SERVICES */
+  .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin-top: 60px; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .service-card { padding: 36px 28px; background: var(--dark-gray); transition: background 0.25s; cursor: default; }
+  .service-card:hover { background: #222; }
+  .service-num { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: rgba(244,97,10,0.2); line-height: 1; margin-bottom: 16px; }
+  .service-card h3 { font-size: 17px; font-weight: 600; margin-bottom: 10px; }
+  .service-card p { font-size: 13px; color: rgba(245,240,232,0.5); line-height: 1.6; margin-bottom: 20px; }
+  .service-price { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--orange); }
+
+  /* PROCESS */
+  .process { background: var(--dark-gray); }
+  .process-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin-top: 60px; position: relative; }
+  .process-steps::before { content: ''; position: absolute; top: 28px; left: 10%; right: 10%; height: 1px; background: linear-gradient(90deg, transparent, var(--orange), transparent); }
+  .process-step { padding: 0 24px; text-align: center; }
+  .step-num { width: 56px; height: 56px; background: var(--black); border: 1px solid var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--orange); }
+  .process-step h4 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .process-step p { font-size: 12px; color: rgba(245,240,232,0.5); line-height: 1.5; }
+
+  /* NICHES */
+  .niches-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 48px; }
+  .niche-tag { padding: 12px 24px; border: 1px solid var(--border); border-radius: 100px; font-size: 14px; font-weight: 500; cursor: default; transition: all 0.2s; display: flex; align-items: center; gap: 8px; }
+  .niche-tag:hover { border-color: var(--orange); color: var(--orange); }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--dark-gray); }
+  .testimonial-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 60px; }
+  .testimonial-card { background: var(--black); border: 1px solid var(--border); border-radius: 10px; padding: 28px; }
+  .stars { color: var(--orange); font-size: 14px; margin-bottom: 14px; letter-spacing: 2px; }
+  .testimonial-text { font-size: 14px; line-height: 1.65; color: rgba(245,240,232,0.7); margin-bottom: 20px; font-style: italic; }
+  .testimonial-author { display: flex; align-items: center; gap: 12px; }
+  .author-avatar { width: 38px; height: 38px; border-radius: 50%; background: rgba(244,97,10,0.2); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; color: var(--orange); }
+  .author-name { font-size: 13px; font-weight: 600; }
+  .author-role { font-size: 11px; color: rgba(245,240,232,0.4); }
+
+  /* CTA */
+  .cta-section { text-align: center; padding: 120px 60px; position: relative; overflow: hidden; }
+  .cta-section::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(244,97,10,0.1) 0%, transparent 70%); }
+  .cta-section .section-title { font-size: clamp(48px, 6vw, 80px); margin-bottom: 16px; }
+  .cta-section p { color: rgba(245,240,232,0.55); font-size: 17px; margin-bottom: 40px; }
+  .cta-form { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
+  .cta-form input { padding: 16px 24px; border-radius: 4px; border: 1px solid rgba(245,240,232,0.2); background: rgba(245,240,232,0.05); color: var(--cream); font-family: 'DM Sans', sans-serif; font-size: 15px; width: 280px; outline: none; transition: border-color 0.2s; }
+  .cta-form input:focus { border-color: var(--orange); }
+  .cta-form input::placeholder { color: rgba(245,240,232,0.3); }
+
+  /* FOOTER */
+  footer { padding: 40px 60px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  footer p { font-size: 13px; color: rgba(245,240,232,0.3); }
+  .footer-links { display: flex; gap: 28px; }
+  .footer-links a { color: rgba(245,240,232,0.3); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--cream); }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    nav ul { display: none; }
+    section { padding: 70px 24px; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-stats { gap: 28px; flex-wrap: wrap; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: repeat(2,1fr); gap: 32px; }
+    .process-steps::before { display: none; }
+    .testimonial-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Trades<span>AI</span></div>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#contact">Contact Us</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#" onclick="openCalModal(event)" class="nav-cta">Free Audit</a></li>
+  </ul>
+</nav>
+
+<!-- CALENDAR MODAL -->
+<div class="cal-modal-overlay" id="calModal" onclick="closeCalModalOnOverlay(event)">
+  <div class="cal-modal">
+    <div class="cal-modal-header">
+      <span>Book Your Free <span style="color:var(--orange)">AI Audit</span></span>
+      <button class="cal-close" onclick="closeCalModal()">✕</button>
+    </div>
+    <iframe id="calIframe" src="" loading="lazy" title="Book Free AI Audit"></iframe>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">AI FOR TRADES COMPANIES</div>
+    <h1>Stop Losing<br>Jobs to <span class="accent">Bad</span><br>Systems</h1>
+    <p class="hero-sub">We help HVAC, plumbing, electrical, and contracting companies automate their workflows — so you spend less time on admin and more time on the tools.</p>
+    <div class="hero-actions">
+      <a href="#" onclick="openCalModal(event)" class="btn-primary">Get a Free AI Audit →</a>
+      <a href="#services" class="btn-ghost">See What We Do</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Hours saved per week</div>
+      </div>
+      <div>
+        <div class="stat-num">3×</div>
+        <div class="stat-label">Faster estimate turnaround</div>
+      </div>
+      <div>
+        <div class="stat-num">0</div>
+        <div class="stat-label">Missed follow-ups</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN POINTS -->
+<section class="pain">
+  <div class="section-label">The Problem</div>
+  <div class="section-title">Sound Familiar?</div>
+  <p class="section-sub">Most trades companies are leaving money on the table — not because of bad work, but because of broken back-office systems.</p>
+  <div class="pain-grid">
+    <div class="pain-list">
+      <div class="pain-item">
+        <div class="pain-icon">📞</div>
+        <div class="pain-text">
+          <h4>Leads falling through the cracks</h4>
+          <p>Missed calls and slow follow-ups are handing jobs to your competitors every single week.</p>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">📋</div>
+        <div class="pain-text">
+          <h4>Estimates taking too long</h4>
+          <p>You or your best tech spends hours on quotes that should take minutes.</p>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">📅</div>
+        <div class="pain-text">
+          <h4>Scheduling chaos</h4>
+          <p>Double-bookings, no-shows, and last-minute changes are costing you real money.</p>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">⭐</div>
+        <div class="pain-text">
+          <h4>Not enough Google reviews</h4>
+          <p>You do great work but never remember to ask — and your competitor with worse service is outranking you.</p>
+        </div>
+      </div>
+    </div>
+    <div class="pain-visual">
+      <div class="terminal-bar">
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+      </div>
+      <div class="terminal-line"><span class="t-prompt">→ </span><span class="t-cmd">scanning business workflows...</span></div>
+      <div class="terminal-line"><span class="t-out">❌ Lead response time: 4.2 hours avg</span></div>
+      <div class="terminal-line"><span class="t-out">❌ Estimate creation: 45 min/quote</span></div>
+      <div class="terminal-line"><span class="t-out">❌ Follow-up rate: 22%</span></div>
+      <div class="terminal-line"><span class="t-out">❌ Review requests sent: manual only</span></div>
+      <br>
+      <div class="terminal-line"><span class="t-prompt">→ </span><span class="t-cmd">applying AI automation...</span></div>
+      <br>
+      <div class="terminal-line"><span class="t-success">✓ Lead response time: under 2 min</span></div>
+      <div class="terminal-line"><span class="t-success">✓ Estimate creation: 8 min/quote</span></div>
+      <div class="terminal-line"><span class="t-success">✓ Follow-up rate: 100% automated</span></div>
+      <div class="terminal-line"><span class="t-success">✓ Reviews: sent automatically post-job</span></div>
+      <br>
+      <div class="terminal-line"><span class="t-prompt">→ </span><span class="t-success">10–15 hrs/week saved. Ready to start?</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-label">What We Do</div>
+  <div class="section-title">AI Services Built<br>for Trades</div>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-num">01</div>
+      <h3>AI Readiness Audit</h3>
+      <p>We map every workflow in your business and identify exactly where AI saves you time and money. You get a full action plan.</p>
+      <div class="service-price">From $1,500</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">02</div>
+      <h3>Lead &amp; Follow-Up Automation</h3>
+      <p>Instant text responses to new leads, automated follow-up sequences, and job status updates — all without touching your phone.</p>
+      <div class="service-price">From $2,500/mo</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">03</div>
+      <h3>Estimate Automation</h3>
+      <p>AI-assisted quoting tools that turn a quick voice note or job form into a professional estimate in minutes, not hours.</p>
+      <div class="service-price">From $2,000/mo</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">04</div>
+      <h3>Scheduling &amp; Dispatch AI</h3>
+      <p>Smart scheduling that reduces conflicts, sends automated reminders, and keeps your crew on track without constant calls.</p>
+      <div class="service-price">From $1,500/mo</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">05</div>
+      <h3>Review Generation System</h3>
+      <p>Automatically ask happy customers for Google reviews right after a job is completed. More reviews, less effort.</p>
+      <div class="service-price">From $500/mo</div>
+    </div>
+    <div class="service-card">
+      <div class="service-num">06</div>
+      <h3>AI Staff Training</h3>
+      <p>Get your whole team using AI tools the right way. Custom training sessions tailored to how your business actually works.</p>
+      <div class="service-price">From $3,000/session</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE SERVE -->
+<section id="about" style="background: var(--dark-gray);">
+  <div class="section-label">Who We Serve</div>
+  <div class="section-title">Built for the<br>Trades Industry</div>
+  <p class="section-sub">We work exclusively with trades companies — which means every solution we build is designed around how your business actually operates.</p>
+  <div class="niches-row">
+    <div class="niche-tag">🌬️ HVAC Companies</div>
+    <div class="niche-tag">🔧 Plumbing</div>
+    <div class="niche-tag">⚡ Electrical</div>
+    <div class="niche-tag">🏗️ General Contractors</div>
+    <div class="niche-tag">🪟 Roofing</div>
+    <div class="niche-tag">🎨 Painting</div>
+    <div class="niche-tag">🌿 Landscaping</div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-label">How It Works</div>
+  <div class="section-title">Simple. Fast. Done.</div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <h4>Free AI Audit Call</h4>
+      <p>30-minute call to map your biggest time drains and identify your top 3 AI opportunities.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <h4>Custom Roadmap</h4>
+      <p>You get a clear implementation plan — exactly what we'll build, what it costs, and what you'll save.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <h4>We Build It</h4>
+      <p>We set up and configure every automation. Your team doesn't need to touch a thing.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <h4>Ongoing Support</h4>
+      <p>Monthly check-ins, system updates, and support as your business grows and changes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-label">Results</div>
+  <div class="section-title">What Clients Say</div>
+  <div class="testimonial-grid">
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"We went from losing leads on weekends to having an automated system that responds in under a minute. Booked 6 extra jobs in the first month."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">MR</div>
+        <div>
+          <div class="author-name">Mike R.</div>
+          <div class="author-role">Owner, R&amp;R HVAC Services</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"Estimates used to take me 45 minutes. Now my office manager runs them in 8 minutes. That alone freed up my whole morning."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">DT</div>
+        <div>
+          <div class="author-name">Danny T.</div>
+          <div class="author-role">Owner, Tanner Plumbing Co.</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="stars">★★★★★</div>
+      <p class="testimonial-text">"We went from 14 Google reviews to 87 in three months. The automated review requests are a game changer for local ranking."</p>
+      <div class="testimonial-author">
+        <div class="author-avatar">SL</div>
+        <div>
+          <div class="author-name">Sarah L.</div>
+          <div class="author-role">GM, Lightning Fast Electric</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="cta-section" id="contact">
+  <div style="position:relative; max-width:640px; margin:0 auto; text-align:center;">
+    <div class="section-label" style="text-align:center">Get In Touch</div>
+    <div class="section-title" style="text-align:center;">Ready To Grow<br><span style="color:var(--orange)">Your Business?</span></div>
+    <p style="margin-bottom:48px; color:rgba(245,240,232,0.55); font-size:16px; line-height:1.65;">Book a free 30-minute AI audit and let's map out exactly how automation can save you time and win you more jobs.</p>
+
+    <div style="display:flex; flex-direction:column; gap:16px; align-items:center;">
+      <a href="#" onclick="openCalModal(event)" class="btn-primary" style="font-size:16px; padding:18px 48px; display:inline-block; text-decoration:none;">
+        Book Your Free AI Audit →
+      </a>
+      <a href="opt-in.html" style="font-size:14px; color:rgba(245,240,232,0.45); text-decoration:none; transition:color 0.2s;" onmouseover="this.style.color='var(--orange)'" onmouseout="this.style.color='rgba(245,240,232,0.45)'">
+        Want SMS updates? Sign up here →
+      </a>
+    </div>
+
+    <div style="display:flex; justify-content:center; gap:40px; margin-top:52px; padding-top:40px; border-top:1px solid var(--border); flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-size:13px; color:rgba(245,240,232,0.4); margin-bottom:4px; letter-spacing:0.3px;">Phone</div>
+        <a href="tel:+17739862968" style="color:var(--cream); text-decoration:none; font-size:15px; font-weight:500;">773-986-2968</a>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:13px; color:rgba(245,240,232,0.4); margin-bottom:4px; letter-spacing:0.3px;">Email</div>
+        <a href="mailto:tradesai@tradesaiconsulting.online" style="color:var(--cream); text-decoration:none; font-size:15px; font-weight:500;">tradesai@tradesaiconsulting.online</a>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:13px; color:rgba(245,240,232,0.4); margin-bottom:4px; letter-spacing:0.3px;">Location</div>
+        <span style="color:var(--cream); font-size:15px; font-weight:500;">Chicago, IL</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+function openCalModal(e) {
+  e.preventDefault();
+  const iframe = document.getElementById('calIframe');
+  if (!iframe.src || iframe.src === window.location.href) {
+    iframe.src = 'https://api.leadconnectorhq.com/widget/bookings/free-ai-audit-30-min-booking';
+  }
+  document.getElementById('calModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCalModal() {
+  document.getElementById('calModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeCalModalOnOverlay(e) {
+  if (e.target === document.getElementById('calModal')) closeCalModal();
+}
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeCalModal();
+});
+</script>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Trades<span>AI</span></div>
+  <div style="text-align:center;">
+    <p>© 2026 TradesAI Consulting. All rights reserved.</p>
+    <p style="font-size:12px; color:rgba(245,240,232,0.3); margin-top:6px;">Chicago, IL 60601 &nbsp;|&nbsp; <a href="tel:+17739862968" style="color:rgba(245,240,232,0.3); text-decoration:none;">773-986-2968</a> &nbsp;|&nbsp; <a href="mailto:tradesai@tradesaiconsulting.online" style="color:rgba(245,240,232,0.3); text-decoration:none;">tradesai@tradesaiconsulting.online</a></p>
+  </div>
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms &amp; Conditions</a>
+    <a href="#contact">Contact Us</a>
+  </div>
+</footer>
+
+<script src="https://widgets.leadconnectorhq.com/loader.js" data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js" data-widget-id="69d6bfdf84d877edd8fcbba5"></script>
+</body>
+</html>
