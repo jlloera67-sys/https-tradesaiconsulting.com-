@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TradesAI — AI Solutions for the Trades Industry</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #0a0a0a;
+    --orange: #F4610A;
+    --orange-light: #FF7D2E;
+    --cream: #F5F0E8;
+    --gray: #888;
+    --dark-gray: #1a1a1a;
+    --border: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--black);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; width: 100%; z-index: 100;
+    padding: 20px 60px;
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(10,10,10,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 28px;
+    letter-spacing: 2px;
+    color: var(--cream);
+  }
+
+  .logo span { color: var(--orange); }
+
+  nav ul { list-style: none; display: flex; gap: 40px; }
+  nav ul a {
+    color: rgba(245,240,232,0.6);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--cream); }
+
+  .nav-cta {
+    background: var(--orange);
+    color: var(--black) !important;
+    padding: 10px 22px;
+    border-radius: 4px;
+    font-weight: 600 !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--orange-light) !important; color: var(--black) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 140px 60px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 60% at 80% 50%, rgba(244,97,10,0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(244,97,10,0.06) 0%, transparent 60%);
+  }
+
+  .hero-grid {
+    position: absolute; inset: 0; opacity: 0.03;
+    background-image:
+      linear-gradient(rgba(245,240,232,0.5) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,240,232,0.5) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-content { position: relative; max-width: 800px; }
+
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(244,97,10,0.12);
+    border: 1px solid rgba(244,97,10,0.3);
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--orange);
+    letter-spacing: 1px;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .hero-tag::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--orange);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(64px, 9vw, 120px);
+    line-height: 0.92;
+    letter-spacing: 2px;
+    margin-bottom: 28px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  h1 .accent { color: var(--orange); }
+
+  .hero-sub {
+    font-size: 18px;
+    line-height: 1.6;
+    color: rgba(245,240,232,0.65);
+    max-width: 520px;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .btn-primary {
+    background: var(--orange);
+    color: var(--black);
+    padding: 16px 32px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--orange-light); transform: translateY(-1px); }
+
+  .btn-ghost {
+    border: 1px solid rgba(245,240,232,0.2);
+    color: var(--cream);
+    padding: 16px 32px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost:hover { border-color: var(--cream); }
+
+  .hero-stats {
+    display: flex; gap: 48px; margin-top: 72px;
+    padding-top: 40px;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: rgba(245,240,232,0.5);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SECTION COMMON */
+  section { padding: 100px 60px; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--orange);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 5vw, 64px);
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+
+  .section-sub {
+    font-size: 16px;
+    color: rgba(245,240,232,0.55);
+    line-height: 1.65;
+    max-width: 480px;
+  }
+
+  /* PAIN POINTS */
+  .pain { background: var(--dark-gray); }
+
+  .pain-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-top: 60px;
+    align-items: start;
+  }
+
+  .pain-list { display: flex; flex-direction: column; gap: 20px; }
+
+  .pain-item {
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    transition: border-color 0.2s;
+  }
+  .pain-item:hover { border-color: rgba(244,97,10,0.3); }
+
+  .pain-icon {
+    width: 36px; height: 36px;
+    background: rgba(244,97,10,0.12);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .pain-text h4 {
+    font-size: 15px; font-weight: 600; margin-bottom: 4px;
+  }
+  .pain-text p { font-size: 13px; color: rgba(245,240,232,0.5); line-height: 1.5; }
+
+  .pain-visual {
+    background: var(--black);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    position: sticky; top: 100px;
+  }
+
+  .terminal-bar {
+    display: flex; gap: 6px; margin-bottom: 24px;
+  }
+  .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .terminal-dot:nth-child(1) { background: #ff5f57; }
+  .terminal-dot:nth-child(2) { background: #febc2e; }
+  .terminal-dot:nth-child(3) { background: #28c840; }
+
+  .terminal-line {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 10px;
+    line-height: 1.6;
+  }
+  .t-prompt { color: var(--orange); }
+  .t-cmd { color: var(--cream); }
+  .t-out { color: rgba(245,240,232,0.45); }
+  .t-success { color: #28c840; }
+
+  /* PRICING */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+    margin-top: 60px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .pricing-card {
+    padding: 36px 28px;
+    background: var(--dark-gray);
+    transition: background 0.25s;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .pricing-card:hover { background: #222; }
+  .pricing-card.featured {
+    background: #1e1000;
+    border-top: 2px solid var(--orange);
+  }
+  .pricing-card.featured:hover { background: #221200; }
+
+  .pricing-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--orange);
+    background: rgba(244,97,10,0.12);
+    border: 1px solid rgba(244,97,10,0.25);
+    padding: 4px 10px;
+    border-radius: 100px;
+    display: inline-block;
+    margin-bottom: 20px;
+    width: fit-content;
+  }
+
+  .pricing-tier {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(245,240,232,0.35);
+    margin-bottom: 8px;
+  }
+  .pricing-card.featured .pricing-tier { color: rgba(244,97,10,0.65); }
+
+  .pricing-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+
+  .pricing-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    color: var(--orange);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .pricing-price span {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: rgba(245,240,232,0.35);
+    font-weight: 400;
+  }
+
+  .pricing-promise {
+    font-size: 14px;
+    color: rgba(245,240,232,0.65);
+    line-height: 1.55;
+    margin-bottom: 22px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pricing-includes {
+    list-style: none;
+    margin-bottom: 28px;
+    flex: 1;
+  }
+  .pricing-includes li {
+    font-size: 13px;
+    color: rgba(245,240,232,0.5);
+    padding: 9px 0 9px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    position: relative;
+    line-height: 1.45;
+  }
+  .pricing-includes li:last-child { border-bottom: none; }
+  .pricing-includes li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--orange);
+    font-size: 11px;
+    top: 11px;
+  }
+
+  .pricing-cta {
+    display: block;
+    text-align: center;
+    padding: 13px 20px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: 1px solid rgba(245,240,232,0.18);
+    color: var(--cream);
+  }
+  .pricing-cta:hover { border-color: var(--orange); color: var(--orange); }
+  .pricing-cta.featured-cta {
+    background: var(--orange);
+    color: var(--black);
+    border-color: var(--orange);
+  }
+  .pricing-cta.featured-cta:hover { background: var(--orange-light); }
+
+  /* PROCESS */
+  .process { background: var(--dark-gray); }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-top: 60px;
+    position: relative;
+  }
+
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 28px; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--orange), transparent);
+  }
+
+  .process-step { padding: 0 24px; text-align: center; }
+
+  .step-num {
+    width: 56px; height: 56px;
+    background: var(--black);
+    border: 1px solid var(--orange);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--orange);
+  }
+
+  .process-step h4 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  .process-step p { font-size: 12px; color: rgba(245,240,232,0.5); line-height: 1.5; }
+
+  /* NICHES */
+  .niches-row {
+    display: flex; gap: 16px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+  }
+
+  .niche-tag {
+    padding: 12px 24px;
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    font-size: 14px; font-weight: 500;
+    cursor: default;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .niche-tag:hover {
+    border-color: var(--orange);
+    color: var(--orange);
+  }
+
+  /* CTA */
+  .cta-section {
+    text-align: center;
+    padding: 120px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 70% at 50% 50%, rgba(244,97,10,0.1) 0%, transparent 70%);
+  }
+
+  .cta-section .section-title { font-size: clamp(48px, 6vw, 80px); margin-bottom: 16px; }
+  .cta-section p { color: rgba(245,240,232,0.55); font-size: 17px; margin-bottom: 40px; }
+
+  .cta-form {
+    display: flex; gap: 12px; justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+  }
+
+  .cta-form input {
+    padding: 16px 24px;
+    border-radius: 4px;
+    border: 1px solid rgba(245,240,232,0.2);
+    background: rgba(245,240,232,0.05);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    width: 280px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .cta-form input:focus { border-color: var(--orange); }
+  .cta-form input::placeholder { color: rgba(245,240,232,0.3); }
+
+  /* FOOTER */
+  footer {
+    padding: 40px 60px;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  footer p { font-size: 13px; color: rgba(245,240,232,0.3); }
+
+  .footer-links { display: flex; gap: 28px; }
+  .footer-links a { color: rgba(245,240,232,0.3); text-decoration: none; font-size: 13px; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--cream); }
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    nav ul { display: none; }
+    section { padding: 70px 24px; }
+    .hero { padding: 120px 24px 60px; }
+    .hero-stats { gap: 28px; flex-wrap: wrap; }
+    .pain-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: repeat(2,1fr); gap: 32px; }
+    .process-steps::before { display: none; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Trades<span>AI</span></div>
+  <ul>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="https://calendly.com/gearnco/30-min-ai-audit" target="_blank" rel="noopener noreferrer" class="nav-cta">Free Audit</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-tag">MISSED CALL RECOVERY SYSTEM</div>
+    <h1>Every Missed<br>Call is a <span class="accent">Lost</span><br>Job</h1>
+    <p class="hero-sub">We install a system that automatically texts back your missed calls within 60 seconds — so you stop losing jobs to competitors before you even know you missed them.</p>
+    <div class="hero-actions">
+      <a href="https://calendly.com/gearnco/30-min-ai-audit" target="_blank" rel="noopener noreferrer" class="btn-primary">Get a Free AI Audit →</a>
+      <a href="#services" class="btn-ghost">See What We Do</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">60s</div>
+        <div class="stat-label">Average text-back time</div>
+      </div>
+      <div>
+        <div class="stat-num">3-5</div>
+        <div class="stat-label">Extra jobs booked per month</div>
+      </div>
+      <div>
+        <div class="stat-num">0</div>
+        <div class="stat-label">Missed follow-ups</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN POINTS -->
+<section class="pain">
+  <div class="section-label">The Problem</div>
+  <div class="section-title">Sound Familiar?</div>
+  <p class="section-sub">Most trades companies are leaving money on the table — not because of bad work, but because of broken back-office systems.</p>
+  <div class="pain-grid">
+    <div class="pain-list">
+      <div class="pain-item">
+        <div class="pain-icon">📞</div>
+        <div class="pain-text">
+          <h4>Leads falling through the cracks</h4>
+          <p>Missed calls and slow follow-ups are handing jobs to your competitors every single week.</p>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">📋</div>
+        <div class="pain-text">
+          <h4>Estimates taking too long</h4>
+          <p>You or your best tech spends hours on quotes that should take minutes.</p>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">📅</div>
+        <div class="pain-text">
+          <h4>Scheduling chaos</h4>
+          <p>Double-bookings, no-shows, and last-minute changes are costing you real money.</p>
+        </div>
+      </div>
+      <div class="pain-item">
+        <div class="pain-icon">⭐</div>
+        <div class="pain-text">
+          <h4>Not enough Google reviews</h4>
+          <p>You do great work but never remember to ask — and your competitor with worse service is outranking you.</p>
+        </div>
+      </div>
+    </div>
+    <div class="pain-visual">
+      <div class="terminal-bar">
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+      </div>
+      <div class="terminal-line"><span class="t-prompt">→ </span><span class="t-cmd">scanning business workflows...</span></div>
+      <div class="terminal-line"><span class="t-out">❌ Lead response time: 4.2 hours avg</span></div>
+      <div class="terminal-line"><span class="t-out">❌ Estimate creation: 45 min/quote</span></div>
+      <div class="terminal-line"><span class="t-out">❌ Follow-up rate: 22%</span></div>
+      <div class="terminal-line"><span class="t-out">❌ Review requests sent: manual only</span></div>
+      <br>
+      <div class="terminal-line"><span class="t-prompt">→ </span><span class="t-cmd">applying AI automation...</span></div>
+      <br>
+      <div class="terminal-line"><span class="t-success">✓ Lead response time: under 2 min</span></div>
+      <div class="terminal-line"><span class="t-success">✓ Estimate creation: 8 min/quote</span></div>
+      <div class="terminal-line"><span class="t-success">✓ Follow-up rate: 100% automated</span></div>
+      <div class="terminal-line"><span class="t-success">✓ Reviews: sent automatically post-job</span></div>
+      <br>
+      <div class="terminal-line"><span class="t-prompt">→ </span><span class="t-success">10–15 hrs/week saved. Ready to start?</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="services">
+  <div class="section-label">Pricing</div>
+  <div class="section-title">Three Packages.<br>One Clear Result.</div>
+  <p class="section-sub">Pick the tier that fits your business today. Every package has one job — stop losing money to slow follow-up and missed leads.</p>
+  <div class="pricing-grid">
+
+    <!-- STARTER -->
+    <div class="pricing-card">
+      <div class="pricing-tier">Starter</div>
+      <div class="pricing-name">Review Bot</div>
+      <div class="pricing-price">$97–$197<span>/mo</span></div>
+      <p class="pricing-promise">Get your first 20+ Google reviews on autopilot — without asking a single customer yourself.</p>
+      <ul class="pricing-includes">
+        <li>Automated review request sent after every completed job</li>
+        <li>Direct link to your Google profile — zero friction for the customer</li>
+        <li>Texts happy customers the moment the job closes</li>
+        <li>Monthly report showing new reviews gained</li>
+      </ul>
+      <a href="https://calendly.com/gearnco/30-min-ai-audit" target="_blank" rel="noopener noreferrer" class="pricing-cta">Book a Free Call →</a>
+    </div>
+
+    <!-- GROWTH -->
+    <div class="pricing-card featured">
+      <div class="pricing-badge">Most Popular</div>
+      <div class="pricing-tier">Growth</div>
+      <div class="pricing-name">Chatbot + Review Bot</div>
+      <div class="pricing-price">$297–$497<span>/mo</span></div>
+      <p class="pricing-promise">Respond to every new lead in under 2 minutes — automatically — while you're on the job.</p>
+      <ul class="pricing-includes">
+        <li>Everything in Starter</li>
+        <li>AI chatbot handles inquiries on your website 24/7</li>
+        <li>Instant SMS follow-up on every missed call or web lead</li>
+        <li>5-step automated nurture sequence keeps leads warm</li>
+        <li>Full GHL pipeline so every lead is tracked and followed up</li>
+      </ul>
+      <a href="https://calendly.com/gearnco/30-min-ai-audit" target="_blank" rel="noopener noreferrer" class="pricing-cta featured-cta">Book a Free Call →</a>
+    </div>
+
+    <!-- PLATINUM -->
+    <div class="pricing-card">
+      <div class="pricing-tier">Platinum</div>
+      <div class="pricing-name">Full System</div>
+      <div class="pricing-price">$697–$797<span>/mo</span></div>
+      <p class="pricing-promise">Your entire back office on autopilot — leads, reviews, scheduling, and missed calls all handled for you.</p>
+      <ul class="pricing-includes">
+        <li>Everything in Growth</li>
+        <li>AI scheduling & dispatch — reminders sent automatically</li>
+        <li>Missed call text-back fires in under 60 seconds</li>
+        <li>Estimate follow-up sequences so no quote goes cold</li>
+        <li>Monthly strategy call + priority support</li>
+      </ul>
+      <a href="https://calendly.com/gearnco/30-min-ai-audit" target="_blank" rel="noopener noreferrer" class="pricing-cta">Book a Free Call →</a>
+    </div>
+
+  </div>
+</section>
+
+<!-- WHO WE SERVE -->
+<section id="about" style="background: var(--dark-gray);">
+  <div class="section-label">Who We Serve</div>
+  <div class="section-title">Built for the<br>Trades Industry</div>
+  <p class="section-sub">We work exclusively with trades companies — which means every solution we build is designed around how your business actually operates.</p>
+  <div class="niches-row">
+    <div class="niche-tag">🌬️ HVAC Companies</div>
+    <div class="niche-tag">🔧 Plumbing</div>
+    <div class="niche-tag">⚡ Electrical</div>
+    <div class="niche-tag">🏗️ General Contractors</div>
+    <div class="niche-tag">🪟 Roofing</div>
+    <div class="niche-tag">🎨 Painting</div>
+    <div class="niche-tag">🌿 Landscaping</div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="section-label">How It Works</div>
+  <div class="section-title">Simple. Fast. Done.</div>
+  <div class="process-steps">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <h4>Free AI Audit Call</h4>
+      <p>30-minute call to map your biggest time drains and identify your top 3 AI opportunities.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <h4>Custom Roadmap</h4>
+      <p>You get a clear implementation plan — exactly what we'll build, what it costs, and what you'll save.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">3</div>
+      <h4>We Build It</h4>
+      <p>We set up and configure every automation. Your team doesn't need to touch a thing.</p>
+    </div>
+    <div class="process-step">
+      <div class="step-num">4</div>
+      <h4>Ongoing Support</h4>
+      <p>Monthly check-ins, system updates, and support as your business grows and changes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div style="position:relative">
+    <div class="section-label" style="text-align:center">Get Started</div>
+    <div class="section-title">Ready to Save<br><span style="color:var(--orange)">10 Hours</span> a Week?</div>
+    <p>Book a free 30-minute AI Audit. No pitch. Just a clear look at where your business can win with AI.</p>
+    <div class="cta-form" style="flex-direction:column; align-items:center; max-width:520px; margin:0 auto;">
+      <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; width:100%;">
+        <input type="text" id="form-name" placeholder="Your name" style="flex:1; min-width:200px;">
+        <input type="text" id="form-phone" placeholder="Phone number" style="flex:1; min-width:200px;">
+      </div>
+      <input type="email" id="form-email" placeholder="Business email" style="width:100%; margin-top:12px;">
+
+      <!-- SMS Consent Checkbox 1: Transactional -->
+      <div style="margin-top:20px; padding:14px; background:rgba(244,97,10,0.06); border:1px solid rgba(244,97,10,0.2); border-radius:8px; display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left;">
+        <input type="checkbox" id="contact-sms-transactional" required style="margin-top:2px; flex-shrink:0; width:17px; height:17px; accent-color:var(--orange); cursor:pointer;">
+        <label for="contact-sms-transactional" style="font-size:12px; color:rgba(245,240,232,0.55); line-height:1.7; cursor:pointer;">
+          By checking this box, I consent to receive transactional messages related to my account, orders, or services I have requested from <strong style="color:rgba(245,240,232,0.8);">TradesAI Consulting</strong>. These messages may include reminders, order confirmations, and account notifications. Message frequency may vary. Message &amp; data rates may apply. Reply <strong style="color:rgba(245,240,232,0.8);">HELP</strong> for help or <strong style="color:rgba(245,240,232,0.8);">STOP</strong> to opt out.
+        </label>
+      </div>
+
+      <!-- SMS Consent Checkbox 2: Marketing -->
+      <div style="margin-top:12px; padding:14px; background:rgba(244,97,10,0.06); border:1px solid rgba(244,97,10,0.2); border-radius:8px; display:flex; align-items:flex-start; gap:12px; width:100%; text-align:left;">
+        <input type="checkbox" id="contact-sms-marketing" style="margin-top:2px; flex-shrink:0; width:17px; height:17px; accent-color:var(--orange); cursor:pointer;">
+        <label for="contact-sms-marketing" style="font-size:12px; color:rgba(245,240,232,0.55); line-height:1.7; cursor:pointer;">
+          By checking this box, I consent to receive marketing and promotional messages, including special offers, discounts, and new service updates from <strong style="color:rgba(245,240,232,0.8);">TradesAI Consulting</strong>. Message frequency may vary. Message &amp; data rates may apply. Reply <strong style="color:rgba(245,240,232,0.8);">HELP</strong> for help or <strong style="color:rgba(245,240,232,0.8);">STOP</strong> to opt out.
+        </label>
+      </div>
+
+      <p style="font-size:12px; color:rgba(245,240,232,0.3); text-align:center; margin-top:16px; line-height:1.8;">
+        By submitting this form you agree to our
+        <a href="privacy.html" style="color:var(--orange); text-decoration:none;">Privacy Policy</a>
+        and
+        <a href="terms.html" style="color:var(--orange); text-decoration:none;">Terms &amp; Conditions</a>.
+      </p>
+
+      <a href="https://calendly.com/gearnco/30-min-ai-audit" target="_blank" rel="noopener noreferrer" class="btn-primary" style="margin-top:20px;">Book Free Audit →</a>
+    </div>
+    <p style="margin-top:16px; font-size:12px; color:rgba(245,240,232,0.3)">No commitment. No tech knowledge required.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Trades<span>AI</span></div>
+  <p>© 2026 TradesAI Consulting. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>
